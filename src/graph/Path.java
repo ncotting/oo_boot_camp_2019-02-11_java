@@ -9,18 +9,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Understands a way to get from one Node to another
-public class Path {
-    private final List<Link> links = new ArrayList<>();
+public abstract class Path {
+    static final Path NONE = new NoPath();
 
-    public int hopCount() {
-        return links.size();
+    public abstract int hopCount();
+
+    public abstract double cost();
+
+    Path prepend(Link link) { return this; }  // Do nothing
+
+    static class ActualPath extends Path {
+        private final List<Link> links = new ArrayList<>();
+
+        @Override
+        public int hopCount() {
+            return links.size();
+        }
+
+        @Override
+        public double cost() {
+            return Link.totalCost(links);
+        }
+
+        @Override
+        Path prepend(Link link) {
+            links.add(0, link);
+            return this;
+        }
+
     }
 
-    public double cost() {
-        return Link.totalCost(links);
-    }
-
-    void prepend(Link link) {
-        links.add(0, link);
+    static class NoPath extends Path {
+        public int hopCount() { return Integer.MAX_VALUE; }
+        public double cost() { return Double.POSITIVE_INFINITY; }
     }
 }

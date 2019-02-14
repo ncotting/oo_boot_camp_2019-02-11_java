@@ -27,9 +27,7 @@ class Link {
     }
 
     Path path(Node destination, List<Node> visitedNodes) {
-        Path result = target.path(destination, visitedNodes);
-        if (result != null) result.prepend(this);
-        return result;
+        return target.path(destination, visitedNodes).prepend(this);
     }
 
     static double totalCost(List<Link> links) {
