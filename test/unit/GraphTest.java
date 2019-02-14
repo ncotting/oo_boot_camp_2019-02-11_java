@@ -5,12 +5,15 @@
 
 package unit;
 import graph.Node;
+import graph.Path;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 // Ensures graph algorithms function correctly
 class GraphTest {
+    private static final double EPSILON = 0.00000001;
+
     private final static Node A, B, C, D, E, F, G;
 
     static {
@@ -59,5 +62,22 @@ class GraphTest {
         assertThrows(IllegalArgumentException.class, () -> G.cost(B));
         assertThrows(IllegalArgumentException.class, () -> A.cost(B));
         assertThrows(IllegalArgumentException.class, () -> B.cost(G));
+    }
+
+    @Test void path() {
+        assertPath(A, A, 0, 0);
+        assertPath(B, A, 1, 5);
+        assertPath(B, F, 1, 4);
+        assertPath(B, D, 2, 7);
+        assertPath(C, F, 4, 10);
+        assertThrows(IllegalArgumentException.class, () -> G.path(A));
+        assertThrows(IllegalArgumentException.class, () -> A.path(B));
+        assertThrows(IllegalArgumentException.class, () -> B.path(G));
+    }
+
+    private void assertPath(Node source, Node destination, long expectedHopCount, long expectedCost) {
+        Path p = source.path(destination);
+        assertEquals(expectedHopCount, p.hopCount());
+        assertEquals(expectedCost, p.cost(), EPSILON);
     }
 }
