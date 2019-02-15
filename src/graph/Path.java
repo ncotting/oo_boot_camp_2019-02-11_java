@@ -6,10 +6,13 @@
 package graph;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 // Understands a way to get from one Node to another
 public abstract class Path {
+    static final Comparator<Path> LEAST_COST = Comparator.comparingDouble(Path::cost);
+
     static final Path NONE = new NoPath();
 
     public abstract int hopCount();

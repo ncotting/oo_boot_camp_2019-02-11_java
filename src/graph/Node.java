@@ -32,17 +32,17 @@ public class Node {
     }
 
     public Path path(Node destination) {
-        Path result = this.path(destination, noVisitedNodes());
+        Path result = this.path(destination, noVisitedNodes(), Path.LEAST_COST);
         if (result == Path.NONE) throw new IllegalArgumentException("Unreachable destination");
         return result;
     }
 
-    Path path(Node destination, List<Node> visitedNodes) {
+    Path path(Node destination, List<Node> visitedNodes, Comparator<Path> strategy) {
         if (this == destination) return new Path.ActualPath();
         if (visitedNodes.contains(this)) return Path.NONE;
         return links.stream()
-                .map(link -> link.path(destination, copyWithThis(visitedNodes)))
-                .min(Comparator.comparing(Path::cost))
+                .map(link -> link.path(destination, copyWithThis(visitedNodes), strategy))
+                .min(strategy)
                 .orElse(Path.NONE);
     }
 

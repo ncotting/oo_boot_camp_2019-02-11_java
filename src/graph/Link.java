@@ -5,6 +5,7 @@
 
 package graph;
 
+import java.util.Comparator;
 import java.util.List;
 
 // Understands a connnection from one Node to another
@@ -26,8 +27,8 @@ class Link {
         return target.cost(destination, visitedNodes, strategy) + strategy.cost(cost);
     }
 
-    Path path(Node destination, List<Node> visitedNodes) {
-        return target.path(destination, visitedNodes).prepend(this);
+    Path path(Node destination, List<Node> visitedNodes, Comparator<Path> strategy) {
+        return target.path(destination, visitedNodes, strategy).prepend(this);
     }
 
     static double totalCost(List<Link> links) {
