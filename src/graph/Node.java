@@ -38,7 +38,7 @@ public class Node {
     }
 
     Path path(Node destination, List<Node> visitedNodes) {
-        if (this == destination) return new Path();
+        if (this == destination) return new Path.ActualPath();
         if (visitedNodes.contains(this)) return null;
         return links.stream()
                 .map(link -> link.path(destination, copyWithThis(visitedNodes)))
