@@ -8,11 +8,9 @@ package graph;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 // Understands its neighbors
 public class Node {
-    private static final double UNREACHABLE = Double.POSITIVE_INFINITY;
     private final List<Link> links = new ArrayList<>();
 
     public LinkBuilder cost(double amount) {
@@ -20,19 +18,23 @@ public class Node {
     }
 
     public boolean canReach(Node destination) {
-        return cost(destination, noVisitedNodes(), Link.LEAST_COST) != UNREACHABLE;
+        return path(destination, noVisitedNodes(), Path.LEAST_COST) != Path.NONE;
     }
 
     public int hopCount(Node destination) {
-        return (int)cost(destination, Link.FEWEST_HOPS);
+        return path(destination, Path.FEWEST_HOPS).hopCount();
     }
 
     public double cost(Node destination) {
-        return cost(destination, Link.LEAST_COST);
+        return path(destination).cost();
     }
 
     public Path path(Node destination) {
-        Path result = this.path(destination, noVisitedNodes(), Path.LEAST_COST);
+        return path(destination, Path.LEAST_COST);
+    }
+
+    private Path path(Node destination, Comparator<Path> strategy) {
+        Path result = this.path(destination, noVisitedNodes(), strategy);
         if (result == Path.NONE) throw new IllegalArgumentException("Unreachable destination");
         return result;
     }
@@ -44,21 +46,6 @@ public class Node {
                 .map(link -> link.path(destination, copyWithThis(visitedNodes), strategy))
                 .min(strategy)
                 .orElse(Path.NONE);
-    }
-
-    private double cost(Node destination, Link.CostStrategy strategy) {
-        double result = this.cost(destination, noVisitedNodes(), strategy);
-        if (result == UNREACHABLE) throw new IllegalArgumentException("Unreachable destination");
-        return result;
-    }
-
-    double cost(Node destination, List<Node> visitedNodes, Link.CostStrategy strategy) {
-        if (this == destination) return 0;
-        if (visitedNodes.contains(this)) return UNREACHABLE;
-        return links.stream()
-                .mapToDouble(link -> link.cost(destination, copyWithThis(visitedNodes), strategy))
-                .min()
-                .orElse(UNREACHABLE);
     }
 
     private List<Node> noVisitedNodes() {

@@ -12,6 +12,7 @@ import java.util.List;
 // Understands a way to get from one Node to another
 public abstract class Path {
     static final Comparator<Path> LEAST_COST = Comparator.comparingDouble(Path::cost);
+    static final Comparator<Path> FEWEST_HOPS = Comparator.comparingInt(Path::hopCount);
 
     static final Path NONE = new NoPath();
 
